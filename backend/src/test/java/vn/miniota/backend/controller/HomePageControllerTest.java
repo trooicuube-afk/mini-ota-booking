@@ -3,17 +3,17 @@ package vn.miniota.backend.controller;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
+import vn.miniota.backend.AbstractIntegrationTest;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 
-@SpringBootTest
 @AutoConfigureMockMvc
-class HomePageControllerTest {
+class HomePageControllerTest extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -126,10 +126,12 @@ class HomePageControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        // All /app/* links should start with /app/
-        // No React routes outside /app/* should exist
-        // Thymeleaf routes like /rooms/{slug} are fine
-        assert !html.contains("href=\"/login\"") : "Found /login outside /app/*";
-        assert !html.contains("href=\"/register\"") : "Found /register outside /app/*";
+        // Verify no href="/login" or href="/register" (must be /app/login, /app/register)
+        org.junit.jupiter.api.Assertions.assertFalse(
+                html.contains("href=\"/login\""),
+                "Found bare /login link outside /app/*");
+        org.junit.jupiter.api.Assertions.assertFalse(
+                html.contains("href=\"/register\""),
+                "Found bare /register link outside /app/*");
     }
 }
