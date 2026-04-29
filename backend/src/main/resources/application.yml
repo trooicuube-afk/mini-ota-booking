@@ -1,0 +1,60 @@
+spring:
+  application:
+    name: mini-ota-backend
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+
+server:
+  port: 8080
+
+miniota:
+  home:
+    seo:
+      title: "MiniOTA — Đặt phòng homestay nhanh, quản lý lịch trống rõ ràng"
+      description: "MiniOTA giúp khách đặt phòng homestay theo ngày và số khách, chủ phòng quản lý lịch trống, giá và booking trên cùng một hệ thống."
+      canonical: "https://miniota.vn/"
+      robots: "index,follow"
+      twitter-card: "summary_large_image"
+      og:
+        title: "MiniOTA — Đặt phòng & quản lý homestay"
+        description: "Tìm phòng homestay theo ngày, số khách, địa điểm. Chủ phòng quản lý lịch, giá, booking tập trung."
+        image-url: "https://cdn.miniota.vn/og/home-og-1200x630.jpg"
+        image-alt: "Phòng homestay view núi tại Đà Lạt"
+    header:
+      logo-text: "MiniOTA"
+      nav:
+        - label: "Tìm phòng"
+          href: "/app/rooms"
+          external: false
+        - label: "Thành phố nổi bật"
+          href: "#cities"
+          external: false
+        - label: "Dành cho chủ phòng"
+          href: "/dich-vu-quan-ly-homestay"
+          external: false
+        - label: "Cách hoạt động"
+          href: "#how-it-works"
+          external: false
+      login-label: "Đăng nhập"
+      login-href: "/app/login"
+      register-label: "Đăng ký"
+      register-href: "/app/register"
+    hero:
+      badge: "Mini OTA · Booking + Property Management"
+      title-line1: "Đặt phòng homestay nhanh,"
+      title-line2: "quản lý lịch trống rõ ràng"
+      title-highlight: "rõ ràng"
+      subtitle: "Tìm phòng phù hợp theo ngày, số khách và địa điểm. Chủ phòng có thể quản lý lịch, giá và booking trên cùng một hệ thống."
+      image-url: "https://cdn.miniota.vn/landing/hero-da-lat.jpg"
+      image-alt: "Phòng homestay view núi tại Đà Lạt với ban công gỗ và nội thất ấm áp"
+      trust-badges:
+        - label: "Lịch trống rõ ràng"
+          color-token: "success"
+        - label: "Giữ phòng 15 phút"
+          color-token: "warning"
+        - label: "Không đặt trùng phòng"
+          color-token: "primary"
+      search-cta: "Tìm phòng"
+      search-action: "/app/rooms"
