@@ -41,8 +41,8 @@ management:
         include: health,info
   endpoint:
     health:
-      show-details: always
-      show-components: always
+      show-details: when_authorized
+      show-components: when_authorized
 
 miniota:
   home:
