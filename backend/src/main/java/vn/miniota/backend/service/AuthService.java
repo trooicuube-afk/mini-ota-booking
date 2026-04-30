@@ -1,5 +1,6 @@
 package vn.miniota.backend.service;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,7 +61,11 @@ public class AuthService {
         user.setPhone(request.getPhone());
         user.setRoles(Set.of(customerRole));
 
-        user = userRepository.save(user);
+        try {
+            user = userRepository.save(user);
+        } catch (DataIntegrityViolationException e) {
+            throw new AppException(ErrorCode.DUPLICATE_EMAIL);
+        }
         return buildAuthResponse(user);
     }
 
@@ -70,12 +75,12 @@ public class AuthService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.INVALID_CREDENTIALS));
 
-        if (!"ACTIVE".equals(user.getStatus())) {
-            throw new AppException(ErrorCode.USER_DISABLED);
-        }
-
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new AppException(ErrorCode.INVALID_CREDENTIALS);
+        }
+
+        if (!"ACTIVE".equals(user.getStatus())) {
+            throw new AppException(ErrorCode.USER_DISABLED);
         }
 
         return buildAuthResponse(user);
