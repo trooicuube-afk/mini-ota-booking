@@ -25,17 +25,20 @@ public class AuthService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenService refreshTokenService;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
     public AuthService(UserRepository userRepository,
                        RoleRepository roleRepository,
                        RefreshTokenRepository refreshTokenRepository,
+                       RefreshTokenService refreshTokenService,
                        PasswordEncoder passwordEncoder,
                        JwtService jwtService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.refreshTokenRepository = refreshTokenRepository;
+        this.refreshTokenService = refreshTokenService;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
     }
@@ -91,14 +94,12 @@ public class AuthService {
         RefreshToken storedToken = refreshTokenRepository.findByTokenAndRevokedFalse(request.getRefreshToken())
                 .orElseThrow(() -> new AppException(ErrorCode.INVALID_REFRESH_TOKEN));
 
+        // Revoke in a separate transaction so it commits even if we throw below
+        refreshTokenService.revokeToken(storedToken);
+
         if (storedToken.getExpiresAt().isBefore(Instant.now())) {
-            storedToken.setRevoked(true);
-            refreshTokenRepository.save(storedToken);
             throw new AppException(ErrorCode.INVALID_REFRESH_TOKEN);
         }
-
-        storedToken.setRevoked(true);
-        refreshTokenRepository.save(storedToken);
 
         User user = storedToken.getUser();
         if (!"ACTIVE".equals(user.getStatus())) {
