@@ -10,6 +10,9 @@ import org.testcontainers.containers.wait.strategy.Wait;
 @SpringBootTest
 public abstract class AbstractIntegrationTest {
 
+    static final String TEST_JWT_SECRET =
+            "test-only-miniota-jwt-secret-key-that-is-at-least-64-bytes-long-for-hmac-sha512!!";
+
     static final PostgreSQLContainer<?> POSTGRES;
     static final GenericContainer<?> REDIS;
 
@@ -33,5 +36,6 @@ public abstract class AbstractIntegrationTest {
         registry.add("spring.datasource.password", POSTGRES::getPassword);
         registry.add("spring.data.redis.host", REDIS::getHost);
         registry.add("spring.data.redis.port", () -> REDIS.getMappedPort(6379));
+        registry.add("miniota.jwt.secret", () -> TEST_JWT_SECRET);
     }
 }

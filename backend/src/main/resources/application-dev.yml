@@ -12,6 +12,10 @@ spring:
   thymeleaf:
     cache: false
 
+miniota:
+  jwt:
+    secret: dev-only-miniota-jwt-secret-key-that-is-at-least-64-bytes-long-for-hmac-sha512!!
+
 management:
   endpoint:
     health:
