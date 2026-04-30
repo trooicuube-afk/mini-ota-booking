@@ -6,8 +6,43 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
 
+  # --- Data ---
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/miniota}
+    username: ${DATABASE_USERNAME:miniota}
+    password: ${DATABASE_PASSWORD:miniota}
+    hikari:
+      maximum-pool-size: 10
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  # --- Redis ---
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
 server:
   port: 8080
+
+# --- Actuator ---
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when_authorized
+      show-components: when_authorized
 
 miniota:
   home:
