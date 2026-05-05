@@ -20,7 +20,8 @@
     "scripts": {
         "serve": "php -S 127.0.0.1:8080 -t public",
         "seed": "php database/seed.php",
-        "lint": "find app bootstrap config database public routes -name '*.php' -print0 | xargs -0 -n1 php -l"
+        "lint": "find app bootstrap config database public routes tests -name '*.php' -print0 | xargs -0 -n1 php -l",
+        "test": "php tests/FeatureSmokeTest.php"
     },
     "config": {
         "sort-packages": true

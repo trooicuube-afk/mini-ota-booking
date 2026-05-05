@@ -79,6 +79,11 @@ class AdminController extends Controller
             redirect('/admin/users');
         }
 
+        if ((int) $id === Auth::id() && ($role !== 'admin' || $status !== 'active')) {
+            flash('error', 'You cannot demote or disable your own account.');
+            redirect('/admin/users');
+        }
+
         (new User())->updateAdmin((int) $id, $role, $status);
         flash('success', 'User updated.');
         redirect('/admin/users');

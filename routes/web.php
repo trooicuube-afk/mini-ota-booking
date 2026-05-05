@@ -24,7 +24,6 @@ $router->get('/login', [AuthController::class, 'loginForm']);
 $router->post('/login', [AuthController::class, 'login']);
 $router->get('/register', [AuthController::class, 'registerForm']);
 $router->post('/register', [AuthController::class, 'register']);
-$router->get('/logout', [AuthController::class, 'logout']);
 $router->post('/logout', [AuthController::class, 'logout']);
 
 $router->get('/admin', [AdminController::class, 'dashboard']);

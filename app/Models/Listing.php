@@ -12,8 +12,8 @@ class Listing extends Model
         $params = [];
 
         if (!empty($filters['q'])) {
-            $where[] = '(l.title LIKE :q_title OR l.description LIKE :q_description OR l.address LIKE :q_address)';
-            $keyword = '%' . $filters['q'] . '%';
+            $where[] = "(l.title LIKE :q_title ESCAPE '\\\\' OR l.description LIKE :q_description ESCAPE '\\\\' OR l.address LIKE :q_address ESCAPE '\\\\')";
+            $keyword = '%' . addcslashes((string) $filters['q'], '%_\\') . '%';
             $params['q_title'] = $keyword;
             $params['q_description'] = $keyword;
             $params['q_address'] = $keyword;

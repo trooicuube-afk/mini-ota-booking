@@ -94,9 +94,7 @@ class AuthController extends Controller
 
     public function logout(): void
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->requireCsrf();
-        }
+        $this->requireCsrf();
 
         Auth::logout();
         flash('success', 'You have signed out.');
