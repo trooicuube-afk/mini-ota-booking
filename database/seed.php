@@ -136,6 +136,7 @@ $listings = [
         'contact_name' => 'Demo Seller',
         'contact_phone' => '+84 900 111 222',
         'status' => 'approved',
+        'demo_image' => 'assets/demo-listings/sunlit-apartment.jpg',
     ],
     [
         'user_id' => $ids['users']['seller@lhtestate.test'],
@@ -151,6 +152,7 @@ $listings = [
         'contact_name' => 'Demo Seller',
         'contact_phone' => '+84 900 111 222',
         'status' => 'approved',
+        'demo_image' => 'assets/demo-listings/garden-townhouse.jpg',
     ],
     [
         'user_id' => $ids['users']['seller@lhtestate.test'],
@@ -166,10 +168,14 @@ $listings = [
         'contact_name' => 'Demo Seller',
         'contact_phone' => '+84 900 111 222',
         'status' => 'pending',
+        'demo_image' => 'assets/demo-listings/coastal-land-lot.jpg',
     ],
 ];
 
 foreach ($listings as $listing) {
+    $demoImage = $listing['demo_image'];
+    unset($listing['demo_image']);
+
     $exists = $pdo->prepare('SELECT COUNT(*) FROM listings WHERE slug = :slug');
     $exists->execute(['slug' => $listing['slug']]);
     if ((int) $exists->fetchColumn() === 0) {
@@ -179,6 +185,21 @@ foreach ($listings as $listing) {
              VALUES (' . implode(', ', array_map(static fn (string $column): string => ':' . $column, $columns)) . ', NOW(), NOW())'
         );
         $statement->execute($listing);
+    }
+
+    $listingLookup = $pdo->prepare('SELECT id FROM listings WHERE slug = :slug LIMIT 1');
+    $listingLookup->execute(['slug' => $listing['slug']]);
+    $listingId = (int) $listingLookup->fetchColumn();
+    if ($listingId > 0) {
+        $imageExists = $pdo->prepare('SELECT COUNT(*) FROM listing_images WHERE listing_id = :listing_id AND path = :path');
+        $imageExists->execute(['listing_id' => $listingId, 'path' => $demoImage]);
+        if ((int) $imageExists->fetchColumn() === 0) {
+            $imageInsert = $pdo->prepare(
+                'INSERT INTO listing_images (listing_id, path, sort_order, created_at)
+                 VALUES (:listing_id, :path, 0, NOW())'
+            );
+            $imageInsert->execute(['listing_id' => $listingId, 'path' => $demoImage]);
+        }
     }
 }
 
