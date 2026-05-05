@@ -78,8 +78,7 @@ class Auth
         self::requireAuth();
         $user = self::user();
         if ($user === null || $user['role'] !== 'admin') {
-            http_response_code(403);
-            echo (new \App\Controllers\HomeController())->error(403, 'You do not have access to this area.');
+            (new \App\Controllers\HomeController())->error(403, 'You do not have access to this area.');
             exit;
         }
     }

@@ -167,7 +167,7 @@ class ListingController extends Controller
             (new SavedListing())->save((int) Auth::id(), (int) $id);
             flash('success', 'Listing saved.');
         }
-        redirect($_SERVER['HTTP_REFERER'] ?? '/saved');
+        redirect_back('/saved');
     }
 
     public function unsave(string $id): void
@@ -176,7 +176,7 @@ class ListingController extends Controller
         $this->requireCsrf();
         (new SavedListing())->unsave((int) Auth::id(), (int) $id);
         flash('success', 'Listing removed from saved items.');
-        redirect($_SERVER['HTTP_REFERER'] ?? '/saved');
+        redirect_back('/saved');
     }
 
     private function validatedListingData(): array

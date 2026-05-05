@@ -32,7 +32,7 @@ abstract class Controller
     {
         if (!verify_csrf($_POST['_csrf_token'] ?? null)) {
             flash('error', 'Your session expired. Please try again.');
-            redirect($_SERVER['HTTP_REFERER'] ?? '/');
+            redirect_back();
         }
     }
 
@@ -41,7 +41,7 @@ abstract class Controller
         set_old($_POST);
         Session::put('_errors', $errors);
         flash('error', 'Please review the highlighted fields.');
-        redirect($_SERVER['HTTP_REFERER'] ?? '/');
+        redirect_back();
     }
 
     protected function validationErrors(): array

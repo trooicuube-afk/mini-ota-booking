@@ -48,6 +48,27 @@ function redirect(string $path): never
     exit;
 }
 
+function redirect_back(string $fallback = '/'): never
+{
+    $referer = $_SERVER['HTTP_REFERER'] ?? null;
+    if (is_string($referer) && $referer !== '') {
+        $appHost = parse_url((string) config('url'), PHP_URL_HOST);
+        $refererHost = parse_url($referer, PHP_URL_HOST);
+
+        if ($refererHost === $appHost) {
+            $path = parse_url($referer, PHP_URL_PATH) ?: '/';
+            $query = parse_url($referer, PHP_URL_QUERY);
+            redirect($path . (is_string($query) && $query !== '' ? '?' . $query : ''));
+        }
+
+        if (str_starts_with($referer, '/')) {
+            redirect($referer);
+        }
+    }
+
+    redirect($fallback);
+}
+
 function csrf_token(): string
 {
     if (!Session::has('_csrf_token')) {
