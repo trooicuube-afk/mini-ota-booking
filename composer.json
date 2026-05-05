@@ -1,0 +1,29 @@
+{
+    "name": "trooicuube-afk/lht-estate",
+    "description": "LHT Estate native PHP real estate classified marketplace MVP.",
+    "type": "project",
+    "require": {
+        "php": "^8.2",
+        "ext-fileinfo": "*",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
+        "ext-session": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        },
+        "files": [
+            "app/Helpers.php"
+        ]
+    },
+    "scripts": {
+        "serve": "php -S 127.0.0.1:8080 -t public",
+        "seed": "php database/seed.php",
+        "lint": "find app bootstrap config database public routes tests -name '*.php' -print0 | xargs -0 -n1 php -l",
+        "test": "php tests/FeatureSmokeTest.php"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}

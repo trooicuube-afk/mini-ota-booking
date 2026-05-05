@@ -21,6 +21,13 @@ Thumbs.db
 .env
 *.env.local
 
+# PHP
+vendor/
+public/assets/uploads/*
+!public/assets/uploads/.gitkeep
+!public/assets/demo-listings/
+!public/assets/demo-listings/*
+
 # Node
 node_modules/
 dist/

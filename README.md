@@ -1,48 +1,104 @@
-# Mini OTA Booking Platform
+# LHT Estate
 
-Mini OTA Booking Platform is a monorepo for a room booking platform, planned around SEO-friendly public pages, a React application workspace, and versioned backend APIs.
+LHT Estate is a native PHP 8.2+ real estate classified marketplace MVP. It includes public property search, listing detail pages, user authentication, listing CRUD, saved listings, image uploads, admin moderation, and user management.
 
-## Modules
+This implementation is an original brand and UI. Reference sites were used only for functional and business-flow inspiration; no code, logos, trademarks, layouts, or images were copied.
 
-- `backend/`: backend service workspace (Spring Boot + Thymeleaf).
-- `frontend/`: React application workspace, not implemented yet.
-- `mobile/`: mobile application workspace, reserved for later phases.
-- `infra/`: infrastructure placeholders for local services and deployment notes.
-- `docs/`: project documentation, architecture notes, API contract, roadmap, and prototypes.
-- `screenshots/`: project screenshots and demo captures.
+## Tech stack
 
-## Route Convention
+- PHP 8.2+
+- MySQL
+- PDO prepared statements
+- Composer PSR-4 autoload
+- Native PHP MVC structure
+- TailwindCSS CDN for styling
 
-- Thymeleaf SEO: `/`, `/rooms/{slug}`, `/blog/*`, `/homestay-*`
-- React app: `/app/*`
-- API: `/api/v1/*`
+## Main routes
 
-## Roles
+- `/` — homepage
+- `/listings` — public search/filter page
+- `/listing/{slug}` — approved listing detail
+- `/post` — create listing, pending review
+- `/my-listings` — edit/delete own listings
+- `/saved` — saved approved listings
+- `/login`, `/register`, `/logout`
+- `/admin` — moderation dashboard
+- `/admin/listings` — approve/reject/delete listings
+- `/admin/users` — manage users
 
-- `CUSTOMER`
-- `OWNER`
-- `SALE`
-- `ADMIN`
+## Database tables
 
-## Core Flow
+- `users`
+- `listings`
+- `listing_images`
+- `saved_listings`
+- `categories`
+- `provinces`
+- `wards`
 
-Customer search room -> hold room -> confirm booking -> owner manages calendar -> sale supports booking -> admin audits.
+## Local setup
 
-## Documentation
-
-Documentation is maintained in `/docs`.
-
-## Getting Started
-
-### Backend
+1. Copy the environment file:
 
 ```bash
-cd backend
-./mvnw spring-boot:run
+cp .env.example .env
 ```
 
-Open http://localhost:8080/ to see the landing page.
+2. Update `.env` with your MySQL credentials:
 
-## Status
+```dotenv
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=lht_estate
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-Phase CMS-01: Thymeleaf Landing Foundation.
+3. Install dependencies:
+
+```bash
+composer install
+```
+
+4. Import schema and seed demo data:
+
+```bash
+composer seed
+```
+
+The seed command creates the configured database if it does not exist, imports `database/schema.sql`, and inserts demo categories, provinces, wards, users, and listings.
+
+5. Start the local server:
+
+```bash
+composer serve
+```
+
+Open http://127.0.0.1:8080.
+
+## Demo accounts
+
+All demo accounts use password `password123`.
+
+- Admin: `admin@lhtestate.test`
+- Seller: `seller@lhtestate.test`
+- Buyer: `buyer@lhtestate.test`
+
+## Validation and security notes
+
+- Authentication uses `password_hash()` and `password_verify()`.
+- SQL access uses PDO prepared statements.
+- Views escape dynamic output with `htmlspecialchars()` through the `e()` helper.
+- Forms include CSRF tokens.
+- Image uploads are validated by extension and MIME type and stored in `public/assets/uploads`.
+- Public listing pages only show approved listings.
+- Users can only edit/delete their own listings.
+- Admin-only routes enforce role-based access control.
+
+## Useful commands
+
+```bash
+composer lint
+composer seed
+composer serve
+```
