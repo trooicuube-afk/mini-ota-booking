@@ -19,6 +19,7 @@ final class FeatureSmokeTest
         $this->assertLogoutRequiresPost();
         $this->assertSearchEscapesLikeWildcards();
         $this->assertAdminCannotSelfDemote();
+        $this->assertDisabledUserSessionIsRevoked();
         $this->assertSellerToAdminToBuyerFlow();
     }
 
@@ -52,6 +53,36 @@ final class FeatureSmokeTest
 
         $this->assertSame(200, $response['status'], 'Self-demotion post should redirect back to users page.');
         $this->assertContains('You cannot demote or disable your own account.', $response['body'], 'Admin self-demotion should be blocked.');
+    }
+
+    private function assertDisabledUserSessionIsRevoked(): void
+    {
+        $email = 'disabled-session-' . time() . '@lhtestate.test';
+        $user = $this->freshClient();
+        $register = $this->request('GET', '/register', client: $user);
+        $created = $this->request('POST', '/register', [
+            '_csrf_token' => $this->csrf($register['body']),
+            'name' => 'Disabled Session User',
+            'email' => $email,
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ], self::BASE_URL . '/register', $user);
+        $this->assertSame(200, $created['status'], 'Temporary user registration should succeed.');
+
+        $admin = $this->freshClient();
+        $this->login($admin, 'admin@lhtestate.test');
+        $users = $this->request('GET', '/admin/users', client: $admin);
+        $userId = $this->extractUserId($users['body'], $email);
+        $disabled = $this->request('POST', '/admin/users/' . $userId . '/update', [
+            '_csrf_token' => $this->csrf($users['body']),
+            'role' => 'user',
+            'status' => 'disabled',
+        ], self::BASE_URL . '/admin/users', $admin);
+        $this->assertContains('User updated.', $disabled['body'], 'Admin should be able to disable another user.');
+
+        $post = $this->request('GET', '/post', client: $user);
+        $this->assertContains('Your account has been disabled.', $post['body'], 'Disabled existing session should be logged out.');
+        $this->assertContains('Welcome back', $post['body'], 'Disabled user should be redirected to login.');
     }
 
     private function assertSellerToAdminToBuyerFlow(): void

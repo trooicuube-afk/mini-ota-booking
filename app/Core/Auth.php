@@ -71,6 +71,13 @@ class Auth
             flash('error', 'Please sign in to continue.');
             redirect('/login');
         }
+
+        $user = self::user();
+        if ($user !== null && ($user['status'] ?? '') !== 'active') {
+            self::logout();
+            flash('error', 'Your account has been disabled.');
+            redirect('/login');
+        }
     }
 
     public static function requireAdmin(): void
