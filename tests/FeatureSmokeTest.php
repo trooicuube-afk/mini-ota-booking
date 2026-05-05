@@ -17,6 +17,7 @@ final class FeatureSmokeTest
     public function run(): void
     {
         $this->assertLogoutRequiresPost();
+        $this->assertEmptyCsrfTokenIsRejected();
         $this->assertSearchEscapesLikeWildcards();
         $this->assertAdminCannotSelfDemote();
         $this->assertDisabledUserSessionIsRevoked();
@@ -27,6 +28,19 @@ final class FeatureSmokeTest
     {
         $response = $this->request('GET', '/logout');
         $this->assertSame(404, $response['status'], 'GET /logout should not mutate session state.');
+    }
+
+    private function assertEmptyCsrfTokenIsRejected(): void
+    {
+        $client = $this->freshClient();
+        $response = $this->request('POST', '/login', [
+            '_csrf_token' => '',
+            'email' => 'seller@lhtestate.test',
+            'password' => 'password123',
+        ], self::BASE_URL . '/login', $client);
+
+        $this->assertContains('Your session expired. Please try again.', $response['body'], 'Empty CSRF token should be rejected.');
+        $this->assertContains('Welcome back', $response['body'], 'Rejected empty CSRF should redirect to login.');
     }
 
     private function assertSearchEscapesLikeWildcards(): void

@@ -85,7 +85,9 @@ function csrf_field(): string
 
 function verify_csrf(?string $token): bool
 {
-    return is_string($token) && hash_equals((string) Session::get('_csrf_token', ''), $token);
+    $sessionToken = (string) Session::get('_csrf_token', '');
+
+    return is_string($token) && $token !== '' && $sessionToken !== '' && hash_equals($sessionToken, $token);
 }
 
 function flash(string $key, ?string $message = null): ?string
